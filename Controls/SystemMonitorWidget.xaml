@@ -1,0 +1,200 @@
+<UserControl x:Class="VNotch.Controls.SystemMonitorWidget"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Width="150" Height="108" Foreground="White" FontSize="11"
+             FontFamily="{DynamicResource MainSystemFont}"
+             TextOptions.TextRenderingMode="Grayscale"
+             Typography.NumeralAlignment="Tabular"
+             AutomationProperties.Name="System monitor">
+    <UserControl.Resources>
+        <Style x:Key="PageButton" TargetType="ToggleButton">
+            <Setter Property="Foreground" Value="#B4B4B4"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Padding" Value="6,1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="Surface" Background="{TemplateBinding Background}" CornerRadius="4"
+                                BorderBrush="Transparent" BorderThickness="1" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter TargetName="Surface" Property="Background" Value="#333333"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Surface" Property="Background" Value="#3D3D3D"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Surface" Property="BorderBrush" Value="#B4B4B4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="6,3"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="Surface" Background="Transparent" Padding="{TemplateBinding Padding}" CornerRadius="3">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="Surface" Property="Background" Value="#3D3D3D"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Surface" Property="Background" Value="#333333"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="DrivePickerStyle" TargetType="ComboBox">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#292929"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton Focusable="False" ClickMode="Press" Foreground="White"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border x:Name="Surface" Background="#292929" CornerRadius="4" Padding="5,0"
+                                                BorderBrush="Transparent" BorderThickness="1">
+                                            <Grid>
+                                                <ContentPresenter Margin="0,0,12,0" VerticalAlignment="Center"
+                                                                  Content="{Binding SelectionBoxItem, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                                  ContentTemplate="{Binding SelectionBoxItemTemplate, RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
+                                                <Path Data="M0,0 L3,3 L6,0" Stroke="#B4B4B4" StrokeThickness="1.2"
+                                                      HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Surface" Property="Background" Value="#3D3D3D"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <TextBlock x:Name="EmptyText" Text="—" Margin="6,0,16,0" IsHitTestVisible="False"
+                                       VerticalAlignment="Center" Visibility="Collapsed" Foreground="#B4B4B4"/>
+                            <Border x:Name="FocusBorder" IsHitTestVisible="False" BorderThickness="1" CornerRadius="4" BorderBrush="Transparent"/>
+                            <Popup x:Name="PART_Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True" Focusable="False" StaysOpen="False">
+                                <Border Background="#202020" BorderBrush="#444444" BorderThickness="1" CornerRadius="4"
+                                        MinWidth="{TemplateBinding ActualWidth}" Padding="3" Margin="0,2,0,0">
+                                    <ScrollViewer MaxHeight="160" CanContentScroll="True"
+                                                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="HasItems" Value="False">
+                                <Setter TargetName="EmptyText" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter TargetName="FocusBorder" Property="BorderBrush" Value="#B4B4B4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <!-- Fixed 22 + 86 rows keep both pages inside the existing compact widget footprint. -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="22"/>
+            <RowDefinition Height="86"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Top"
+                    MouseDown="InputControl_MouseDown" MouseUp="InputControl_MouseUp" MouseWheel="InputControl_MouseWheel">
+            <RadioButton x:Name="SystemPageButton" Content="System" GroupName="MonitorPage" IsChecked="True"
+                         Style="{StaticResource PageButton}" Click="PageButton_Click"
+                         AutomationProperties.Name="System page"/>
+            <RadioButton x:Name="StoragePageButton" Content="Storage" GroupName="MonitorPage" Margin="3,0,0,0"
+                         Style="{StaticResource PageButton}" Click="PageButton_Click"
+                         AutomationProperties.Name="Storage page"/>
+        </StackPanel>
+        <ContentPresenter x:Name="SystemPage" Grid.Row="1" VerticalAlignment="Center"
+                          Content="{Binding SystemContent, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+        <Grid x:Name="StoragePage" Grid.Row="1" Visibility="Collapsed">
+            <Grid.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="LineHeight" Value="12"/>
+                    <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+                </Style>
+            </Grid.Resources>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="18"/>
+                <RowDefinition Height="14"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="12"/>
+                <RowDefinition Height="12"/>
+                <RowDefinition Height="25"/>
+            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="76"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <ComboBox x:Name="DrivePicker" Style="{StaticResource DrivePickerStyle}" FontSize="11"
+                          IsEnabled="False" SelectionChanged="DrivePicker_SelectionChanged"
+                          MouseDown="InputControl_MouseDown" MouseUp="InputControl_MouseUp" MouseWheel="InputControl_MouseWheel"
+                          ToolTip="Local fixed drive capacity; read/write and activity below cover all physical disks."
+                          AutomationProperties.Name="Storage drive"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
+                            ToolTip="Activity across all physical disks, not only the selected drive.">
+                    <TextBlock Text="Active " Foreground="#B4B4B4"/>
+                    <TextBlock x:Name="DiskActiveText" Text="—" AutomationProperties.Name="All physical disks active percent"/>
+                </StackPanel>
+            </Grid>
+            <TextBlock x:Name="CapacityText" Grid.Row="1" Text="—" VerticalAlignment="Center"
+                       AutomationProperties.Name="Used and total capacity"/>
+            <ProgressBar x:Name="CapacityBar" Grid.Row="2" Height="3" Minimum="0" Maximum="100" Value="0"
+                         IsEnabled="False" Foreground="White" Background="#444444" BorderThickness="0"
+                         VerticalAlignment="Center" AutomationProperties.Name="Drive capacity used percent">
+                <ProgressBar.Template>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Grid>
+                            <Border x:Name="PART_Track" Background="{TemplateBinding Background}" CornerRadius="1.5"/>
+                            <Border x:Name="PART_Indicator" Background="{TemplateBinding Foreground}" CornerRadius="1.5" HorizontalAlignment="Left"/>
+                        </Grid>
+                    </ControlTemplate>
+                </ProgressBar.Template>
+            </ProgressBar>
+            <TextBlock x:Name="FreeText" Grid.Row="3" Text="—" Foreground="#B4B4B4" AutomationProperties.Name="Free capacity"/>
+            <TextBlock Grid.Row="4" Text="All physical disks" Foreground="#B4B4B4"
+                       ToolTip="Read/write rates and active percent are aggregated across physical disks, independent of the selected capacity drive."/>
+            <Grid Grid.Row="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="Read" Foreground="#B4B4B4" LineHeight="12" LineStackingStrategy="BlockLineHeight"/>
+                    <TextBlock x:Name="DiskReadText" Text="—" LineHeight="13" LineStackingStrategy="BlockLineHeight"
+                               AutomationProperties.Name="All physical disks read rate"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                    <TextBlock Text="Write" Foreground="#B4B4B4" LineHeight="12" LineStackingStrategy="BlockLineHeight"/>
+                    <TextBlock x:Name="DiskWriteText" Text="—" LineHeight="13" LineStackingStrategy="BlockLineHeight"
+                               AutomationProperties.Name="All physical disks write rate"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

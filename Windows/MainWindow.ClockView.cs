@@ -32,6 +32,7 @@ public partial class MainWindow : IClockWidgetHost
             DigitalClockWidget = DigitalClockWidget,
             WeatherWidgetContent = WeatherWidgetView,
             SystemMonitorWidgetContent = SystemMonitorWidgetContent,
+            AiUsageWidgetContent = AiUsageWidgetView,
             CalendarStripContainer = CalendarStripContainer,
             MonthText = MonthText,
             DayText = DayText,

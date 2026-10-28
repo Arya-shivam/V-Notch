@@ -34,6 +34,23 @@ public sealed class SystemMonitorSamplingTests
             Assert.True(double.IsFinite(sample.NetUpBytesPerSec));
             Assert.True(sample.NetDownBytesPerSec >= 0);
             Assert.True(sample.NetUpBytesPerSec >= 0);
+            foreach (var drive in sample.StorageDrives)
+            {
+                Assert.True(drive.TotalBytes > 0);
+                Assert.InRange(drive.FreeBytes, 0UL, drive.TotalBytes);
+            }
+            if (sample.DiskReadBytesPerSec is { } read)
+            {
+                Assert.True(double.IsFinite(read));
+                Assert.True(read >= 0);
+            }
+            if (sample.DiskWriteBytesPerSec is { } write)
+            {
+                Assert.True(double.IsFinite(write));
+                Assert.True(write >= 0);
+            }
+            if (sample.DiskActivePercent is { } active)
+                Assert.InRange(active, 0, 100);
         });
         module.Stop();
         int count = samples.Count;

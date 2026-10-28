@@ -156,6 +156,7 @@ public sealed class ClockWidgetPresenterTests
     [InlineData("wordclock")]
     [InlineData("weather")]
     [InlineData("sysmon")]
+    [InlineData("aiusage")]
     public void ApplyExpandedWidgetMode_NonGreetingWidgets_HideGreetingSection(string widgetMode)
     {
         RunSta(() =>

@@ -7,7 +7,7 @@ namespace VNotch.Modules;
 
 /// <summary>
 /// Tick scheduler for the system monitor. CPU, RAM and network sampling (including the smoothing
-/// and delta state) run in VNotch.Native; this class only forwards the sampled numbers.
+/// and delta state) run in VNotch.Native. Storage sampling runs on a separate serialized worker.
 /// </summary>
 public sealed partial class SystemMonitorModule : NotchModuleBase
 {
@@ -65,6 +65,13 @@ public sealed partial class SystemMonitorModule : NotchModuleBase
     private ulong _usablePhysicalBytes;
     private ulong _installedPhysicalBytes;
 
+    private readonly object _storageLifetimeLock = new();
+    private CancellationTokenSource? _storageCancellation;
+    private Task _storageTask = Task.CompletedTask;
+    private int _storageGeneration;
+    private bool _storageDisposed;
+    private StorageMonitorSnapshot _latestStorage = StorageMonitorSnapshot.Unavailable;
+
     public event EventHandler<SystemMonitorInfo>? StatsUpdated;
 
     protected override void OnInitialize()
@@ -84,6 +91,86 @@ public sealed partial class SystemMonitorModule : NotchModuleBase
         if (Interlocked.CompareExchange(ref _isNetworkSampling, 1, 0) == 0)
         {
             Task.Run(SampleNetworkUsageBackground);
+        }
+    }
+
+    protected override void OnStart()
+    {
+        lock (_storageLifetimeLock)
+        {
+            if (_storageDisposed) return;
+            var cancellation = new CancellationTokenSource();
+            _storageCancellation = cancellation;
+            int generation = ++_storageGeneration;
+            _latestStorage = StorageMonitorSnapshot.Unavailable;
+            Task previous = _storageTask;
+            // A rapid stop/start waits off-thread for any slow previous drive access to finish.
+            _storageTask = Task.Run(() => SampleStorageBackgroundAsync(previous, cancellation, generation));
+        }
+    }
+
+    protected override void OnStop() => StopStorageSampling(disposing: false);
+
+    protected override void OnDispose()
+    {
+        StopStorageSampling(disposing: true);
+        base.OnDispose();
+    }
+
+    private void StopStorageSampling(bool disposing)
+    {
+        lock (_storageLifetimeLock)
+        {
+            _storageDisposed |= disposing;
+            ++_storageGeneration;
+            _latestStorage = StorageMonitorSnapshot.Unavailable;
+            _storageCancellation?.Cancel();
+            _storageCancellation = null;
+        }
+        // The worker owns its query and disposes it after the current native call finishes.
+        // Never wait here: DriveInfo may be blocked in Windows while this is the UI thread.
+    }
+
+    private async Task SampleStorageBackgroundAsync(Task previous, CancellationTokenSource cancellation, int generation)
+    {
+        CancellationToken token = cancellation.Token;
+        try
+        {
+            await previous.ConfigureAwait(false);
+            token.ThrowIfCancellationRequested();
+            using var storage = new StorageMonitorService();
+            while (!token.IsCancellationRequested)
+            {
+                StorageMonitorSnapshot snapshot = storage.Sample(token);
+                lock (_storageLifetimeLock)
+                {
+                    if (_storageDisposed || token.IsCancellationRequested || generation != _storageGeneration) return;
+                    _latestStorage = snapshot;
+                }
+                await Task.Delay(TimeSpan.FromSeconds(1), token).ConfigureAwait(false);
+            }
+        }
+        catch (OperationCanceledException) when (token.IsCancellationRequested)
+        {
+            // Stop/restart invalidates pending work without publishing a late sample.
+        }
+        catch (Exception ex)
+        {
+            lock (_storageLifetimeLock)
+            {
+                if (generation == _storageGeneration)
+                    _latestStorage = StorageMonitorSnapshot.Unavailable;
+            }
+            RuntimeLog.Log("SYSTEM-MONITOR-STORAGE", ex.Message);
+        }
+        finally
+        {
+            lock (_storageLifetimeLock)
+            {
+                if (ReferenceEquals(_storageCancellation, cancellation))
+                    _storageCancellation = null;
+                cancellation.Dispose();
+            }
         }
     }
 
@@ -113,6 +200,12 @@ public sealed partial class SystemMonitorModule : NotchModuleBase
             netUp = _latestUpBytesPerSec;
         }
 
+        StorageMonitorSnapshot storage;
+        lock (_storageLifetimeLock)
+        {
+            storage = _latestStorage;
+        }
+
         StatsUpdated?.Invoke(this, new SystemMonitorInfo
         {
             CpuPercent = cpu,
@@ -120,7 +213,11 @@ public sealed partial class SystemMonitorModule : NotchModuleBase
             RamTotalBytes = _installedPhysicalBytes > 0 ? _installedPhysicalBytes : _usablePhysicalBytes,
             RamPercent = ramPercent,
             NetDownBytesPerSec = netDown,
-            NetUpBytesPerSec = netUp
+            NetUpBytesPerSec = netUp,
+            StorageDrives = storage.StorageDrives,
+            DiskReadBytesPerSec = storage.DiskReadBytesPerSec,
+            DiskWriteBytesPerSec = storage.DiskWriteBytesPerSec,
+            DiskActivePercent = storage.DiskActivePercent
         });
     }
 

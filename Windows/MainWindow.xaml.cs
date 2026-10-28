@@ -355,6 +355,7 @@ public partial class MainWindow : Window
 
         _systemMonitorModule = systemMonitorModule;
         InitializeSystemMonitorPresenter();
+        AiUsageWidgetView.ApplySettings(!_settings.EnableLocalOnlyMode && _settings.AllowOnlineAi);
 
         _collapsedWidth = GetCollapsedWidth();
         _collapsedHeight = GetCollapsedHeight();
@@ -692,6 +693,7 @@ public partial class MainWindow : Window
         _privacyModule.StateChanged -= PrivacyModule_StateChanged;
         WeatherWidgetView.Dispose();
         DisposeSystemMonitorPresenter();
+        AiUsageWidgetView.Dispose();
 
         InputMonitorService.MouseActionTriggered -= GlobalMouseHook_MouseLeftButtonDown;
 

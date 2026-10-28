@@ -136,7 +136,8 @@ public partial class SettingsWindow
                 "digitalclock" => 3,
                 "weather" => 4,
                 "sysmon" => 5,
-                "none" => 6,
+                "aiusage" => 6,
+                "none" => 7,
                 _ => 0
             };
             PopulateClockPageStyleCombo();

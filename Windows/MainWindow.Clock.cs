@@ -23,9 +23,12 @@ public partial class MainWindow
     private bool IsSystemMonitorWidgetMode =>
         string.Equals(_settings.ExpandedWidget, "sysmon", StringComparison.OrdinalIgnoreCase);
 
+    private bool IsAiUsageWidgetMode =>
+        string.Equals(_settings.ExpandedWidget, "aiusage", StringComparison.OrdinalIgnoreCase);
+
     private bool IsAnyClockWidgetMode => IsClockWidgetMode || IsWordClockWidgetMode || IsDigitalClockWidgetMode;
 
-    private bool IsNonCalendarWidgetMode => IsAnyClockWidgetMode || IsWeatherWidgetMode || IsSystemMonitorWidgetMode;
+    private bool IsNonCalendarWidgetMode => IsAnyClockWidgetMode || IsWeatherWidgetMode || IsSystemMonitorWidgetMode || IsAiUsageWidgetMode;
 
     private bool IsNoWidgetMode => string.Equals(_settings.ExpandedWidget, "none", StringComparison.OrdinalIgnoreCase);
     private bool ShouldShowMediaBlurBackground => _isLyricsActive || IsNoWidgetMode;

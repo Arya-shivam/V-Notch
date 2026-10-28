@@ -165,6 +165,57 @@ In **Settings → Spotlight**, choose a default opening mode (Search or AI). Pre
 Opening AI mode does not send a request; sending a message transmits it and recent conversation context directly to the selected provider.
 API keys are encrypted in local settings with Windows DPAPI and excluded from settings exports. AI conversations are also encrypted locally; see the [Privacy Policy](docs/PRIVACY_POLICY.md#48-spotlight-ai-opt-in) for storage, recipients, and deletion details.
 
+### System Monitor widget
+
+Choose **Settings → Expanded widget → System Monitor**. The **System** page shows live CPU usage, RAM consumption, and network speeds. Switch to **Storage** for:
+
+- A local fixed-drive selector with used/total/free capacity and a usage bar.
+- Read/write throughput and activity across **all physical disks** (independent of the capacity drive selected).
+
+CPU/RAM/network update every second. Storage sampling runs off the UI thread; disk counters update approximately every second after an initial two-sample warmup, and drive capacity refreshes about every 30 seconds. Inaccessible drives are skipped; unavailable performance counters show a dash, not zero. Capacity/rate units on the Storage page are binary (GiB/TiB, KiB/s/MiB/s). Measurements use local Windows APIs (`GetSystemTimes`, `GlobalMemoryStatusEx`, `DriveInfo`, and English PDH counters), require no cloud connection, and normally work without administrator rights.
+
+### AI subscription usage widget
+
+Choose **Settings → Expanded widget → AI usage** (or swipe through the expanded widgets). Select a provider to see remaining allowance; hover a quota row for its reset time. Refresh runs once per minute while the widget is visible; the refresh button requests an immediate update.
+
+- **Codex:** automatically reads the existing CLI login from `CODEX_HOME/auth.json` or `%USERPROFILE%\.codex\auth.json`.
+- **Claude Code:** reads `CLAUDE_CONFIG_DIR/.credentials.json` or `%USERPROFILE%\.claude\.credentials.json`; subscription usage requires a Claude account token with `user:profile` access.
+- **Kimi Code:** reads the official CLI credentials and existing device identity from `KIMI_SHARE_DIR`, `KIMI_CODE_HOME`, or `%USERPROFILE%\.kimi` (legacy `.kimi-code` fallback). Alternatively set `KIMI_CODE_API_KEY`; only fixed `api.kimi.com` / `api.kimi.ai` usage destinations are supported, with region-matched explicit keys required for the latter.
+
+Browser-only logins and ordinary completion API keys do not automatically expose subscription limits. Missing, expired, denied, or malformed usage is shown as unavailable, never as unused allowance. V-Notch reads login files without changing or refreshing them; renew expired logins in the official client. **Privacy → Allow online AI** and **Strict Local-Only Mode** govern all usage requests.
+
+#### Adding another provider
+
+The widget is provider-neutral: native integrations implement `Services/AiUsage/IAiUsageProvider` (declared in `AiUsageContracts.cs`) and register with `AiUsageService`; no view changes are needed. For an existing normalized HTTPS usage source, add `%LOCALAPPDATA%\V-Notch\usage-providers.json`:
+
+```json
+{
+  "providers": [
+    {
+      "id": "my-provider",
+      "displayName": "My Provider",
+      "endpoint": "https://your-usage-service.example/usage",
+      "bearerTokenEnvironmentVariable": "MY_PROVIDER_USAGE_TOKEN"
+    }
+  ]
+}
+```
+
+The endpoint must return:
+
+```json
+{
+  "windows": [
+    { "name": "Weekly", "usedPercent": 42.5, "resetsAt": "2026-10-30T00:00:00Z" }
+  ]
+}
+```
+
+Percentages must be finite values in `0..100`; `resetsAt` is optional. Definitions reload on refresh. Authentication is optional; when needed, reference a process environment variable and restart V-Notch after setting it. Never put tokens in the configuration or URL. HTTPS is required; redirects, embedded credentials, URL queries/fragments, duplicate IDs, and unknown settings are rejected. Only configure destinations you trust: the named environment credential is sent to that destination. Arbitrary provider APIs require an adapter or a service translating their response into this contract—not merely a provider name or chat API key.
+
+Usage protocols follow the [OpenAI Codex client](https://github.com/openai/codex/blob/main/codex-rs/backend-client/src/client/rate_limit_resets.rs), [Claude usage integration](https://github.com/steipete/CodexBar/blob/main/docs/claude.md), and [official Kimi CLI](https://github.com/MoonshotAI/kimi-cli/blob/main/src/kimi_cli/ui/shell/usage.py). These endpoints can change; their availability is not guaranteed.
+
+
 <div id="installation"></div>
 
 ## Installation

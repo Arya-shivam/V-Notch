@@ -1,4 +1,5 @@
 {
+  "settings.widget.aiusage": "AI usage",
   "clipboard.addLabel": "Add label",
   "clipboard.selectAll": "Select all visible items",
   "clipboard.deleteSelected": "Delete {0} selected items",
@@ -457,7 +458,7 @@
   "settings.opacity.hint": "Adjust how transparent or solid the notch looks on the desktop.",
   "settings.performance": "PERFORMANCE",
   "settings.privacy.ai": "Allow online AI",
-  "settings.privacy.ai.hint": "Allow sending chat messages and fetching provider balances. Turning this off cancels active AI requests.",
+  "settings.privacy.ai.hint": "Allow chat messages, provider balances, and subscription usage lookups. Turning this off cancels active AI requests.",
   "settings.privacy.autoUpdates": "Automatic update checks",
   "settings.privacy.autoUpdates.hint": "Check GitHub Releases periodically in the background for new V-Notch versions.",
   "settings.privacy.browserUrl": "Browser media URL detection",

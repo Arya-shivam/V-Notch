@@ -40,10 +40,11 @@ This policy uses the following terms:
 | **Weather (opt-in)** | Approximate IP-based location (`ipwho.is`) or manual city name | Yes — `ipwho.is`, Open-Meteo | No (transient in memory) |
 | **Update check & download** | Standard HTTP headers only | Yes — GitHub Releases API | Version info in memory; installer in temp directory on update |
 | **Spotlight AI (opt-in)** | Submitted messages, recent context, API key, selected model | Yes — selected AI provider (§4.8) | Keys and chat history encrypted locally (§5.6) |
+| **AI subscription usage widget (opt-in)** | Existing CLI access token, account ID (Codex), device identity/system headers (Kimi), or explicitly configured environment credential | Yes — provider usage endpoints or user-configured HTTPS destination (§4.9) | Quota snapshots in memory only; local custom-source definitions contain no credentials |
 | **Live translation (opt-in)** | Selected text exposed by UI Automation; clipboard text only on an explicit command | No text upload; optional model download contacts Hugging Face | Model/configuration only; translation cache stays in RAM |
 | **Spotlight search & launcher** | Local app names, local file metadata (Windows Search / Everything), math expressions | No | Recent launch frequency stored locally (max 100 entries, see §5) |
 | **Liquid Glass backdrop capture** | Screen pixels directly under the notch area (DXGI / Magnification API) | No | No (processed per-frame on GPU/CPU and discarded immediately) |
-| **System hardware monitor** | CPU usage, RAM usage, GPU utilization (Windows performance counters / DXGI) | No | No (transient in memory) |
+| **System hardware monitor** | CPU/RAM/GPU metrics, network rates, local fixed-drive roots/capacity, aggregate disk throughput/activity (Windows APIs / PDH / DXGI) | No | No (transient in memory) |
 | **Camera preview (opt-in)** | Live camera frames | No | No (never recorded, captured, or saved) |
 | **File Shelf** | File paths + basic file metadata (name, size, type) | No | File paths persisted locally in settings (see §5) |
 | **System audio & mixer** | Read/adjust master and per-app audio endpoint volume (Core Audio) | No | No |
@@ -116,7 +117,7 @@ V-Notch includes a Liquid Glass optical simulation engine that renders realistic
 
 ### 3.5 System Hardware Monitor (CPU, RAM, GPU)
 
-The System Monitor module reads system performance metrics (CPU usage percentage, physical RAM consumption, and GPU utilization) via standard Windows performance counters and DXGI adapter queries. This information is processed in memory for live widget display only and is never stored or transmitted.
+System monitoring reads CPU usage and physical RAM through Windows APIs, network transfer rates through interface counters, local fixed-drive roots and capacity through `DriveInfo`, and aggregate physical-disk read/write throughput and activity through English Windows PDH performance counters. Separate GPU monitoring uses Windows performance counters and DXGI adapter queries. Storage capacity refreshes approximately every 30 seconds; disk activity sampling runs in a background worker about once per second. Monitoring does not read file contents, upload measurements, or persist metric history. Inaccessible drives/counters are skipped or shown as unavailable.
 
 ### 3.6 Camera Preview (Opt-In)
 
@@ -259,6 +260,17 @@ Opening Spotlight, selecting AI as the default mode, or typing without sending d
 The selected provider receives your submitted content, authentication information, IP address, and ordinary HTTP metadata. Its retention, training, international processing, and account controls depend on its current policies and your service tier or account settings. Local encryption does not prevent the provider from processing submitted content. Review [OpenAI's policies](https://openai.com/policies/), [Gemini API terms](https://ai.google.dev/gemini-api/terms), [Anthropic's commercial terms](https://www.anthropic.com/legal/commercial-terms), and [DeepSeek's privacy policy](https://platform.deepseek.com/downloads/DeepSeek%20Privacy%20Policy.html) before sending sensitive information.
 
 The usage display holds provider-reported data in memory: latest-request token counts, rate-limit quota snapshots from supported OpenAI/Claude response headers, and DeepSeek balance results obtained on request. It is not an account-wide usage ledger or monthly budget. Unknown values are hidden; interrupted responses may have incomplete counts. These usage snapshots are not persisted to chat history. Strict Local-Only Mode and the Allow online AI privacy control block explicit AI messages and balance refreshes as well as background requests.
+
+### 4.9 AI Subscription Usage Widget (Opt-In)
+
+Selecting the **AI usage** expanded widget enables read-only usage lookups while it is visible. Requests run on activation, once per minute while visible, and on explicit refresh. V-Notch reads existing Codex / Claude Code / Kimi Code login files locally and sends only the access credentials needed for that provider's fixed usage endpoint, not refresh tokens, prompts, chat history, clipboard contents, or files. Codex also sends its account ID. Kimi CLI authentication sends its existing device ID, machine name, OS version, and architecture headers required by its protocol; an explicit Kimi Code API key is an alternative. V-Notch does not modify, refresh, export, or persist these credentials.
+
+Built-in destinations are `https://chatgpt.com/backend-api/wham/usage`, `https://api.anthropic.com/api/oauth/usage`, and `https://api.kimi.com/coding/v1/usages` (or the explicitly selected `api.kimi.ai` equivalent). Providers receive authentication, IP address, and ordinary connection metadata. These are provider-specific subscription interfaces, not a universal or guaranteed public quota API.
+
+Optional definitions in `%LOCALAPPDATA%\V-Notch\usage-providers.json` add normalized HTTPS usage sources. They reference credentials by environment-variable name only. The configured destination receives that credential; configure only sources you trust. Definitions are reloaded on refresh. Redirects and embedded URL credentials are disabled. Quota snapshots stay in memory and are not added to chat history or settings exports.
+
+**Allow online AI** and **Strict Local-Only Mode** block usage requests and cancel ongoing app-managed reads. Hiding the widget stops its polling and cancels its current refresh. Selecting a different expanded widget stops usage polling; official client login files remain untouched.
+
 
 ## 5. Local Data Storage
 

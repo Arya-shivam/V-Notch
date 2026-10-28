@@ -49,6 +49,7 @@ public sealed class ClockWidgetViewRefs
     public UIElement? DigitalClockWidget { get; init; }
     public UIElement? WeatherWidgetContent { get; init; }
     public UIElement? SystemMonitorWidgetContent { get; init; }
+    public UIElement? AiUsageWidgetContent { get; init; }
     public required UIElement CalendarStripContainer { get; init; }
     public UIElement? MonthText { get; init; }
     public UIElement? DayText { get; init; }
@@ -92,7 +93,7 @@ public sealed class ClockWidgetPresenter : IDisposable
 
     #region Expanded Widget (Calendar / Clock / Word Clock)
 
-    private static readonly string[] _expandedWidgetOrder = { "calendar", "clock", "wordclock", "digitalclock", "weather", "sysmon" };
+    private static readonly string[] _expandedWidgetOrder = { "calendar", "clock", "wordclock", "digitalclock", "weather", "sysmon", "aiusage" };
     private int _expandedWidgetSwitchVersion;
 
     private bool IsClockWidgetMode =>
@@ -110,10 +111,13 @@ public sealed class ClockWidgetPresenter : IDisposable
     private bool IsSystemMonitorWidgetMode =>
         string.Equals(_host.Settings.ExpandedWidget, "sysmon", StringComparison.OrdinalIgnoreCase);
 
+    private bool IsAiUsageWidgetMode =>
+        string.Equals(_host.Settings.ExpandedWidget, "aiusage", StringComparison.OrdinalIgnoreCase);
+
     private bool IsAnyClockWidgetMode => IsClockWidgetMode || IsWordClockWidgetMode || IsDigitalClockWidgetMode;
     private bool IsNoWidgetMode => string.Equals(_host.Settings.ExpandedWidget, "none", StringComparison.OrdinalIgnoreCase);
 
-    private bool IsNonCalendarWidgetMode => IsAnyClockWidgetMode || IsWeatherWidgetMode || IsSystemMonitorWidgetMode;
+    private bool IsNonCalendarWidgetMode => IsAnyClockWidgetMode || IsWeatherWidgetMode || IsSystemMonitorWidgetMode || IsAiUsageWidgetMode;
 
 #pragma warning disable S3776 // Synchronizes visibility and alignments across all expanded widget modes
     public void ApplyExpandedWidgetMode()
@@ -125,7 +129,8 @@ public sealed class ClockWidgetPresenter : IDisposable
         bool useDigitalClock = IsDigitalClockWidgetMode;
         bool useWeather = IsWeatherWidgetMode;
         bool useSystemMonitor = IsSystemMonitorWidgetMode;
-        bool useCalendar = !IsNoWidgetMode && !useAnalogClock && !useWordClock && !useDigitalClock && !useWeather && !useSystemMonitor;
+        bool useAiUsage = IsAiUsageWidgetMode;
+        bool useCalendar = !IsNoWidgetMode && !useAnalogClock && !useWordClock && !useDigitalClock && !useWeather && !useSystemMonitor && !useAiUsage;
         _refs.CalendarWidget.Visibility = IsNoWidgetMode || _host.IsLyricsActive ? Visibility.Collapsed : Visibility.Visible;
 
         _refs.ClockWidget.Visibility = useAnalogClock ? Visibility.Visible : Visibility.Collapsed;
@@ -137,10 +142,12 @@ public sealed class ClockWidgetPresenter : IDisposable
             _refs.WeatherWidgetContent.Visibility = useWeather ? Visibility.Visible : Visibility.Collapsed;
         if (_refs.SystemMonitorWidgetContent != null)
             _refs.SystemMonitorWidgetContent.Visibility = useSystemMonitor ? Visibility.Visible : Visibility.Collapsed;
+        if (_refs.AiUsageWidgetContent != null)
+            _refs.AiUsageWidgetContent.Visibility = useAiUsage ? Visibility.Visible : Visibility.Collapsed;
         _refs.CalendarStripContainer.Visibility = useCalendar ? Visibility.Visible : Visibility.Collapsed;
 
         if (_refs.MonthText != null)
-            _refs.MonthText.Visibility = (IsNoWidgetMode || useWeather || useSystemMonitor) ? Visibility.Collapsed : Visibility.Visible;
+            _refs.MonthText.Visibility = (IsNoWidgetMode || useWeather || useSystemMonitor || useAiUsage) ? Visibility.Collapsed : Visibility.Visible;
         if (_refs.DayText != null)
             _refs.DayText.Visibility = (useWordClock || useDigitalClock) ? Visibility.Visible : Visibility.Collapsed;
 

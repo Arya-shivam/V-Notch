@@ -13,4 +13,12 @@ public sealed class SystemMonitorInfo
     public double NetDownBytesPerSec { get; init; }
 
     public double NetUpBytesPerSec { get; init; }
+
+    public IReadOnlyList<StorageDriveInfo> StorageDrives { get; init; } = Array.Empty<StorageDriveInfo>();
+
+    public double? DiskReadBytesPerSec { get; init; }
+
+    public double? DiskWriteBytesPerSec { get; init; }
+
+    public double? DiskActivePercent { get; init; }
 }

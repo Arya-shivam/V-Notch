@@ -2,6 +2,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
+using VNotch.Controls;
 using VNotch.Models;
 using VNotch.Modules;
 using VNotch.Services;
@@ -17,6 +18,7 @@ public sealed record SystemMonitorViewRefs(
     TextBlock NetUpText)
 {
     public SystemMonitorShelfViewRefs? Shelf { get; init; }
+    public SystemMonitorWidget? Widget { get; init; }
 }
 
 public sealed record SystemMonitorShelfViewRefs(
@@ -100,6 +102,7 @@ public sealed class SystemMonitorPresenter : IDisposable
 
         refs.NetDownText.Text = FormatRate(stats.NetDownBytesPerSec);
         refs.NetUpText.Text = FormatRate(stats.NetUpBytesPerSec);
+        refs.Widget?.Present(stats);
 
         if (refs.Shelf is { Section.Visibility: Visibility.Visible } shelf)
         {

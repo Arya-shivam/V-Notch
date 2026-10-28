@@ -2288,15 +2288,24 @@
                                                         Margin="2,0,0,0"
                                                         Visibility="Collapsed"/>
 
+                                    <ctrl:AiUsageWidget x:Name="AiUsageWidgetView"
+                                                        Grid.Column="0" Grid.ColumnSpan="2"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalAlignment="Left"
+                                                        Margin="2,0,0,0"
+                                                        Visibility="Collapsed"/>
+
                                     <Grid x:Name="SystemMonitorWidgetContent"
                                           Grid.Column="0" Grid.ColumnSpan="2"
                                           VerticalAlignment="Center"
                                           HorizontalAlignment="Left"
                                           Margin="2,0,0,0"
                                           Visibility="Collapsed">
-                                        <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
+                                        <ctrl:SystemMonitorWidget x:Name="SysMonWidgetView"/>
+                                        <StackPanel x:Name="SysMonSystemContent" Visibility="Collapsed"
+                                                    Orientation="Vertical" HorizontalAlignment="Left">
 
-                                            <StackPanel Orientation="Vertical" Margin="0,0,0,13">
+                                            <StackPanel Orientation="Vertical" Margin="0,0,0,6">
                                                 <Grid Width="130">
                                                     <TextBlock Text="CPU"
                                                                FontFamily="{StaticResource MainSystemFont}"
@@ -2308,7 +2317,7 @@
                                                                TextOptions.TextRenderingMode="Grayscale"
                                                                TextOptions.TextHintingMode="Animated"/>
                                                     <TextBlock x:Name="SysMonCpuValueText"
-                                                               Text="0%"
+                                                               Text="—"
                                                                FontFamily="{StaticResource MainSystemFont}"
                                                                FontSize="13"
                                                                FontWeight="Bold"
@@ -2331,7 +2340,7 @@
                                                 </Border>
                                             </StackPanel>
 
-                                            <StackPanel Orientation="Vertical" Margin="0,0,0,13">
+                                            <StackPanel Orientation="Vertical" Margin="0,0,0,6">
                                                 <Grid Width="130">
                                                     <TextBlock Text="RAM"
                                                                FontFamily="{StaticResource MainSystemFont}"
@@ -2379,7 +2388,7 @@
                                                         </Canvas>
                                                     </Viewbox>
                                                     <TextBlock x:Name="SysMonNetDownText"
-                                                               Text="0 B/s"
+                                                               Text="—"
                                                                FontFamily="{StaticResource MainSystemFont}"
                                                                FontSize="10.5"
                                                                FontWeight="Bold"
@@ -2396,7 +2405,7 @@
                                                         </Canvas>
                                                     </Viewbox>
                                                     <TextBlock x:Name="SysMonNetUpText"
-                                                               Text="0 B/s"
+                                                               Text="—"
                                                                FontFamily="{StaticResource MainSystemFont}"
                                                                FontSize="10.5"
                                                                FontWeight="Bold"

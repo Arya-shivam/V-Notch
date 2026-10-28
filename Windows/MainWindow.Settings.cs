@@ -257,6 +257,8 @@ public partial class MainWindow
                 ConfigureOverlayWindow();
         }
 
+        AiUsageWidgetView.ApplySettings(!_settings.EnableLocalOnlyMode && _settings.AllowOnlineAi);
+
         if (oldSettings == null || !string.Equals(oldSettings.ExpandedWidget, _settings.ExpandedWidget, StringComparison.Ordinal))
         {
             ApplyExpandedWidgetMode();
