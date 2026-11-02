@@ -27,6 +27,7 @@
   <a href="#usage">Usage</a> ·
   <a href="#installation">Installation</a> ·
   <a href="#privacy">Privacy</a> ·
+  <a href="#launch-film">Launch film</a> ·
   <a href="https://v-notch.vercel.app">Website</a>
 </p>
 
@@ -42,6 +43,18 @@
 
 <p align="center">
   V-Notch adds media controls, synced lyrics, system stats, privacy indicators, and a Spotlight launcher to the top of your screen. Use it as a compact pill or expand it into a floating Dynamic Island. It works with MyDockFinder.
+</p>
+
+<div id="launch-film"></div>
+
+<h3 align="center">Product launch video</h3>
+
+<p align="center">
+  <a href="launch-film/renders/v-notch-launch-cinematic.mp4">
+    <img src="launch-film/assets/notch-hero.jpg" width="85%" alt="Click to watch the V-Notch launch film">
+  </a><br>
+  <b><a href="launch-film/renders/v-notch-launch-cinematic.mp4">Watch the 23-second launch film</a></b><br>
+  <sub>Unofficial, unsigned Windows x64 fork · AI usage · live CPU/RAM/network · storage</sub>
 </p>
 
 <p align="center">
