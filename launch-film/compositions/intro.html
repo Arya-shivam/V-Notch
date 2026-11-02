@@ -1,0 +1,23 @@
+<template>
+  <style>
+    #root[data-composition-id="intro-scene"] { position:absolute; inset:0; overflow:hidden; color:#fff; font-family:var(--font-display, Inter),sans-serif; }
+    #intro-footage { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+    #intro-trace { position:absolute; left:160px; top:118px; width:1600px; height:2px; background:rgba(255,255,255,.88); transform-origin:center; }
+    #intro-copy { position:absolute; inset:0; padding:0 108px 112px; }
+    #intro-headline { position:absolute; left:108px; bottom:112px; margin:0; max-width:1500px; font-size:92px; line-height:1.02; font-weight:900; letter-spacing:-0.06em; text-shadow:0 2px 24px rgba(0,0,0,.52); }
+  </style>
+  <div data-hf-id="hf-0k8e" id="root" data-composition-id="intro-scene" data-width="1920" data-height="1080">
+    <video data-hf-id="hf-rlfe" id="intro-footage" class="clip" data-start="0" data-duration="2.3" data-track-index="0" data-media-start="4" data-playback-rate="1" muted playsinline src="assets/notch-settings.mp4"></video>
+    <div id="intro-trace" class="clip" data-start="0" data-duration="2.3" data-track-index="1" data-layout-ignore aria-hidden="true"></div>
+    <div data-hf-id="hf-a5ju" id="intro-copy" class="clip" data-start="0.08" data-duration="2.02" data-track-index="2" data-layout-allow-overlap>
+      <h1 data-hf-id="hf-oncn" id="intro-headline" data-var-text="hook">Checking usage provider by provider?</h1>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#intro-trace", { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.38, ease: "power3.out" }, 0.12);
+    tl.fromTo("#intro-headline", { opacity: 0, x: -96, filter: "blur(10px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.36, ease: "power4.out" }, 0.18);
+    window.__timelines["intro-scene"] = tl;
+    tl.seek(0);
+  </script>
+</template>

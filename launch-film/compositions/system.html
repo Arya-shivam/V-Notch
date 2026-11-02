@@ -1,0 +1,40 @@
+<template>
+  <style>
+    #root[data-composition-id="system-scene"] { position:absolute; inset:0; overflow:hidden; background:var(--ground,#F5F5F5); color:var(--ink,#000); font-family:var(--font-display,Inter),sans-serif; }
+    #system-intro, #system-detail { position:absolute; inset:0; }
+    .kicker { position:absolute; left:160px; top:190px; color:#166534; font-size:34px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+    .headline { position:absolute; left:160px; top:365px; max-width:1600px; margin:0; font-size:104px; line-height:1.04; font-weight:900; letter-spacing:-.065em; }
+    #system-measures { position:absolute; left:160px; top:395px; display:flex; align-items:baseline; gap:64px; width:1600px; }
+    .measure { display:inline-block; position:relative; padding-bottom:28px; font-size:100px; line-height:1; font-weight:900; letter-spacing:-.07em; white-space:nowrap; }
+    #system-rule { position:absolute; left:160px; top:555px; width:1600px; height:3px; background:#22c55e; transform-origin:left; }
+    .copy { position:absolute; left:160px; top:640px; max-width:1540px; margin:0; font-size:40px; line-height:1.3; font-weight:500; }
+  </style>
+  <div data-hf-id="hf-rhqr" id="root" data-composition-id="system-scene" data-width="1920" data-height="1080">
+    <div id="system-intro" class="clip" data-start="0" data-duration="1.65" data-track-index="0">
+      <div data-hf-id="hf-0eee" id="system-kicker" class="kicker">System</div>
+      <h2 data-hf-id="hf-bkbl" id="system-headline" class="headline">PC stats buried in Settings?</h2>
+    </div>
+    <div id="system-detail" class="clip" data-start="1.65" data-duration="1.95" data-track-index="1">
+      <div data-hf-id="hf-wvu2" id="system-detail-kicker" class="kicker">Live · every second</div>
+      <div id="system-measures">
+        <span id="system-cpu" class="measure">CPU</span>
+        <span id="system-ram" class="measure">RAM</span>
+        <span id="system-network" class="measure">NETWORK</span>
+      </div>
+      <div id="system-rule" aria-hidden="true"></div>
+      <p data-hf-id="hf-7ct5" id="system-note" class="copy">Local Windows APIs.</p>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#system-headline", { opacity: 0, x: -92, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.34, ease: "power4.out" }, 0.08);
+    tl.fromTo("#system-detail-kicker", { opacity: 0, x: 72, filter: "blur(6px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.28, ease: "power4.out" }, 1.66);
+    tl.fromTo("#system-cpu", { opacity: 0, x: -72, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.32, ease: "power4.out" }, 1.72);
+    tl.fromTo("#system-ram", { opacity: 0, y: 48, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.32, ease: "power4.out" }, 1.80);
+    tl.fromTo("#system-network", { opacity: 0, x: 72, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.32, ease: "power4.out" }, 1.88);
+    tl.fromTo("#system-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.34, ease: "power2.out" }, 1.96);
+    tl.fromTo("#system-note", { opacity: 0, y: 18, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.24, ease: "power4.out" }, 2.04);
+    window.__timelines["system-scene"] = tl;
+    tl.seek(0);
+  </script>
+</template>

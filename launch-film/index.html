@@ -1,0 +1,64 @@
+<!doctype html>
+<html
+  lang="en"
+  data-resolution="landscape"
+  data-composition-variables='[
+    {"id":"ground","type":"color","label":"Background","default":"#F5F5F5"},
+    {"id":"ink","type":"color","label":"Ink","default":"#000000"},
+    {"id":"display-face","type":"string","label":"Display face","default":"Inter"},
+    {"id":"hook","type":"string","label":"Opening line","default":"Checking usage provider by provider?"},
+    {"id":"claim","type":"string","label":"Claim","default":"AI usage. PC stats. Storage."},
+    {"id":"download-label","type":"string","label":"Call to action","default":"Download the Windows preview"},
+    {"id":"download-url","type":"string","label":"Release URL","default":"github.com/Arya-shivam/V-Notch/releases"}
+  ]'
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>V-Notch · Less checking, more in view</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        --muted: #444444;
+        --font-display: var(--display-face, Inter);
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        width: 1920px;
+        height: 1080px;
+        margin: 0;
+        overflow: hidden;
+        background: var(--ground);
+        color: var(--ink);
+        font-family: var(--font-display);
+      }
+      #root[data-composition-id="main"] {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--ground);
+        color: var(--ink);
+        font-family: var(--font-display);
+      }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-e6gp" id="root" data-composition-id="main" data-start="0" data-duration="23.1" data-width="1920" data-height="1080" data-fps="30" data-motion-blur="on">
+      <div data-hf-id="hf-v6cz" id="intro-scene" data-composition-id="intro-scene" data-composition-src="compositions/intro.html" data-start="0" data-duration="2.3" data-track-index="0" data-width="1920" data-height="1080" data-track-kind="graphics"></div>
+      <div data-hf-id="hf-0ut5" id="iris-reveal" data-composition-id="iris-reveal" data-composition-src="compositions/components/iris-reveal.html" data-start="2" data-duration="3.8" data-track-index="1" data-width="1920" data-height="1080" data-track-kind="graphics" data-variable-values='{"iris_x":47,"iris_y":0,"open_at":0.2,"register":"plain","accent":"green","exit":"none"}'></div>
+      <div data-hf-id="hf-jdgj" id="system-scene" data-composition-id="system-scene" data-composition-src="compositions/system.html" data-start="5.8" data-duration="3.6" data-track-index="0" data-width="1920" data-height="1080" data-track-kind="graphics"></div>
+      <div data-hf-id="hf-34dc" id="storage-scene" data-composition-id="storage-scene" data-composition-src="compositions/storage.html" data-start="9.4" data-duration="3.6" data-track-index="0" data-width="1920" data-height="1080" data-track-kind="graphics"></div>
+      <div data-hf-id="hf-me0v" id="product-scene" data-composition-id="product-scene" data-composition-src="compositions/product.html" data-start="13" data-duration="3.8" data-track-index="0" data-width="1920" data-height="1080" data-track-kind="graphics"></div>
+      <div data-hf-id="hf-rgr7" id="endcard-scene" data-composition-id="endcard-scene" data-composition-src="compositions/endcard.html" data-start="16.4" data-duration="6.7" data-track-index="0" data-width="1920" data-height="1080" data-track-kind="graphics"></div>
+      <audio id="sfx-iris-whoosh" class="clip" data-start="1.871" data-duration="0.575" data-track-index="1" data-volume="0.35" data-fade-in="0.02" data-fade-out="0.12" src=".media/audio/sfx/sfx_002.mp3"></audio>
+      <audio id="sfx-hero-impact" class="clip" data-start="11.047" data-duration="2.592" data-track-index="2" data-volume="0.35" data-fade-out="0.12" src=".media/audio/sfx/sfx_003.mp3"></audio>
+      <audio id="music-bed" class="clip" data-start="0" data-duration="23.1" data-media-start="6.9" data-track-index="3" data-volume="0.95" data-fade-in="0.12" data-fade-out="0.15" src="assets/bgm/track.wav"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+      window.__timelines["main"].seek(0);
+    </script>
+  </body>
+</html>

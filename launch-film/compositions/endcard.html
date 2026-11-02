@@ -1,0 +1,33 @@
+<template>
+  <style>
+    #root[data-composition-id="endcard-scene"] { position:absolute; inset:0; overflow:hidden; background:transparent; color:var(--ink,#000); font-family:var(--font-display,Inter),sans-serif; }
+    #endcard-wipe { position:absolute; inset:0; background:var(--ground,#F5F5F5); }
+    #claim { position:absolute; left:0; top:145px; width:100%; margin:0; text-align:center; font-size:96px; line-height:1.05; font-weight:900; letter-spacing:-.06em; }
+    #brand-mark { position:absolute; left:calc(50% - 194px); top:315px; width:82px; height:82px; object-fit:contain; }
+    #brand-name { position:absolute; left:calc(50% - 94px); top:309px; margin:0; font-size:72px; line-height:1.2; font-weight:700; letter-spacing:-.045em; }
+    #cta { position:absolute; left:0; top:680px; width:100%; margin:0; text-align:center; font-size:46px; font-weight:700; }
+    #url { position:absolute; left:100px; top:780px; width:1720px; margin:0; text-align:center; font-family:var(--font-display,Inter),sans-serif; font-size:40px; font-weight:600; letter-spacing:-.02em; color:var(--muted,#444); overflow-wrap:anywhere; }
+    #release-label { position:absolute; left:0; top:455px; width:100%; margin:0; text-align:center; color:var(--muted,#444); font-size:28px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+  </style>
+  <div data-hf-id="hf-i8cf" id="root" data-composition-id="endcard-scene" data-width="1920" data-height="1080">
+    <div id="endcard-wipe" class="clip" data-start="0" data-duration="6.7" data-track-index="0" data-layout-allow-occlusion aria-hidden="true"></div>
+    <h2 data-hf-id="hf-7e2s" id="claim" class="clip" data-start="0.45" data-duration="6.25" data-track-index="1" data-var-text="claim">AI usage. PC stats. Storage.</h2>
+    <img data-hf-id="hf-l13s" id="brand-mark" class="clip" data-start="1" data-duration="5.7" data-track-index="2" src="assets/vnotch-logo.png" alt="V-Notch mark" />
+    <p data-hf-id="hf-ufpy" id="brand-name" class="clip" data-start="1" data-duration="5.7" data-track-index="2">V-Notch</p>
+    <p data-hf-id="hf-dkrd" id="cta" class="clip" data-start="1.3" data-duration="5.4" data-track-index="3" data-var-text="download-label">Download the Windows preview</p>
+    <p id="release-label" class="clip" data-start="1.05" data-duration="5.65" data-track-index="3">Unofficial fork · unsigned · Windows x64</p>
+    <p data-hf-id="hf-hicf" id="url" class="clip" data-start="1.6" data-duration="5.1" data-track-index="3" data-hold data-var-text="download-url">github.com/Arya-shivam/V-Notch/releases</p>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#endcard-wipe", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.46, ease: "power2.inOut" }, 0);
+    tl.fromTo("#claim", { opacity: 0, x: -64, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.32, ease: "power4.out" }, 0.46);
+    tl.fromTo("#brand-mark", { opacity: 0, clipPath: "inset(0 100% 0 0)" }, { opacity: 1, clipPath: "inset(0 0% 0 0)", duration: 0.34, ease: "power3.out" }, 0.92);
+    tl.fromTo("#brand-name", { opacity: 0, clipPath: "inset(0 100% 0 0)" }, { opacity: 1, clipPath: "inset(0 0% 0 0)", duration: 0.34, ease: "power3.out" }, 0.92);
+    tl.fromTo("#release-label", { opacity: 0, y: 18, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.24, ease: "power4.out" }, 1.05);
+    tl.fromTo("#cta", { opacity: 0, y: 18, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.28, ease: "power4.out" }, 1.25);
+    tl.fromTo("#url", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, 1.55);
+    window.__timelines["endcard-scene"] = tl;
+    tl.seek(0);
+  </script>
+</template>
